@@ -32,6 +32,9 @@ UG_RESULT _HW_FillFrame(UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_COLOR rgb
 
 void window_1_callback( UG_MESSAGE* msg );
 
+void button_green_click(void);
+void button_red_click(void);
+
 void clock_setup(void)
 {
     /* We are running on MSI after boot. */
@@ -211,18 +214,42 @@ void window_1_callback( UG_MESSAGE* msg )
          {
             case BTN_ID_0: // Toggle green LED
             {
-               gpio_toggle(GPIOC,GPIO13);
+               button_green_click();
                break;
             }
             case BTN_ID_1: // Toggle red LED
             {
-               gpio_toggle(GPIOC,GPIO13);
+               button_red_click();
                break;
             }
             default : break;
          }
       }
    }
+}
+
+void button_green_click(void)
+{
+    static bool state = false;
+    gpio_toggle(GPIOC,GPIO13);
+    state = !state;
+    if (state) {
+        UG_ButtonSetText(&window_1, BTN_ID_0, "ON");
+    } else {
+        UG_ButtonSetText(&window_1, BTN_ID_0, "OFF");
+    }
+}
+
+void button_red_click(void)
+{
+    static bool state = false;
+    gpio_toggle(GPIOC,GPIO13);
+    state = !state;
+    if (state) {
+        UG_ButtonSetText(&window_1, BTN_ID_1, "ON");
+    } else {
+        UG_ButtonSetText(&window_1, BTN_ID_1, "OFF");
+    }
 }
 
 
@@ -261,12 +288,12 @@ int main(void)
     UG_ButtonCreate( &window_1, &button1_1, BTN_ID_0, 10, 10, 110, 60 );
     UG_ButtonSetFont( &window_1, BTN_ID_0, &FONT_12X20 );
     UG_ButtonSetBackColor( &window_1, BTN_ID_0, C_LIME );
-    UG_ButtonSetText( &window_1, BTN_ID_0, "Green\nLED" );
+    UG_ButtonSetText( &window_1, BTN_ID_0, "OFF" );
 
     UG_ButtonCreate( &window_1, &button1_2, BTN_ID_1, 10, 80, 110, 130 );
     UG_ButtonSetFont( &window_1, BTN_ID_1, &FONT_12X20 );
     UG_ButtonSetBackColor( &window_1, BTN_ID_1, C_RED );
-    UG_ButtonSetText( &window_1, BTN_ID_1, "Red\nLED" );
+    UG_ButtonSetText( &window_1, BTN_ID_1, "OFF" );
 
 
     UG_WindowShow( &window_1 );
